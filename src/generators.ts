@@ -30,7 +30,7 @@ export function skins_json(config: ComputedConfig) {
 		skins: config.components.skins.files.map((skin) => {
 			return {
 				localization_name: skin.name[config.computed.defaultLang],
-				geometry: "geometry.humanoid.custom",
+				geometry: `geometry.humanoid.custom${skin.slimArms ? "Slim" : ""}`,
 				texture: basename(skin.file),
 				type: "free",
 			};

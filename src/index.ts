@@ -25,6 +25,12 @@ export default function main() {
 		}
 	});
 
+	if (config.components.skins) {
+		config.components.skins.files.forEach((skin) => {
+			if (!skin.slimArms) skin.slimArms = false;
+		});
+	}
+
 	// Compute some stuff
 	config.computed = {} as any;
 	config.computed.languages = Object.keys(config.meta.name);

@@ -23,6 +23,7 @@ interface PackConfigMeta {
 }
 interface SkinFile {
 	file: string;
+	slimArms: boolean;
 	name: LanguageField;
 }
 
