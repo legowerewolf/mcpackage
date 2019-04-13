@@ -1,6 +1,6 @@
 {
   "name": "mcpackage-cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Generate Minecraft resource packs from a simple config",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
