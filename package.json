@@ -3,7 +3,7 @@
 	"version": "1.0.1",
 	"description": "Generate Minecraft resource packs from a simple config",
 	"scripts": {
-		"prepublish": "npm run build",
+		"prepare": "npm run build",
 		"build": "tsc"
 	},
 	"bin": {
