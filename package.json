@@ -1,6 +1,6 @@
 {
 	"name": "mcpackage-cli",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Generate Minecraft resource packs from a simple config",
 	"scripts": {
 		"prepare": "npm run build",
