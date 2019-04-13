@@ -25,3 +25,11 @@ interface SkinFile {
 	file: string;
 	name: LanguageField;
 }
+
+export interface ComputedConfig extends PackConfig {
+	computed?: {
+		defaultLang: string;
+		languages: string[];
+		exportName: string;
+	};
+}

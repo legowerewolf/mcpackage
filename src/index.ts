@@ -3,39 +3,57 @@ import nodezip = require("node-zip");
 import { readFileSync, writeFileSync } from "fs";
 import { safeLoad } from "js-yaml";
 import { basename, dirname, resolve } from "path";
-import { language, languages, manifest, skins } from "./generators";
-import { CliArguments, PackConfig } from "./types";
+import { language_lang, manifest_json, skins_json } from "./generators";
+import { CliArguments, ComputedConfig } from "./types";
+import uuid = require("uuid");
 
 export default function main() {
 	let args: CliArguments = minimist(process.argv.slice(2)) as CliArguments;
 
-	let rootFile = args.config ? resolve(args.config) : resolve(process.cwd(), "pack.yaml");
-	let rootPath = dirname(rootFile);
+	let configFile = args.config ? resolve(args.config) : resolve(process.cwd(), "pack.yaml");
 
-	let rootFileContents: PackConfig = safeLoad(readFileSync(rootFile, "utf8")) as PackConfig;
+	let config: ComputedConfig = safeLoad(readFileSync(configFile, "utf8")) as ComputedConfig;
 
-	let langs = languages(rootFileContents);
-	let defaultLang = langs.indexOf("en_US") != -1 ? "en_US" : langs[0];
+	// Add data where necessary
+	let metas = [config.meta];
+	if (config.components.skins) metas.push(config.components.skins.meta);
+	metas.forEach((meta, index) => {
+		if (!meta.version) meta.version = "1.0.0";
+		if (!meta.uuid) meta.uuid = uuid.v4();
+		if (index > 0) {
+			if (!meta.name) meta.name = config.meta.name;
+		}
+	});
 
-	let exportFilename = `${rootFileContents.meta.name[defaultLang].replace(/[ ]/, "_")}-${rootFileContents.meta.version}.mcpack`;
+	// Compute some stuff
+	config.computed = {} as any;
+	config.computed.languages = Object.keys(config.meta.name);
+	config.computed.defaultLang = config.computed.languages.indexOf("en_US") != -1 ? "en_US" : config.computed.languages[0];
+	config.computed.exportName = `${config.meta.name[config.computed.defaultLang].replace(/[ ]/, "_")}-${config.meta.version}.mcpack`;
 
-	console.log(`Generating ${exportFilename}...`);
+	// Begin generating the pack file
+	console.log(`Generating ${config.computed.exportName}...`);
+	let pack = new nodezip();
 
-	let packFile = new nodezip();
+	// Build and insert the manifest
+	pack.file("manifest.json", manifest_json(config));
 
-	packFile.file("manifest.json", JSON.stringify(manifest(rootFileContents, defaultLang)));
-	packFile.file("texts/languages.json", JSON.stringify(langs));
+	// Build and insert language files
+	pack.file("texts/languages.json", JSON.stringify(config.computed.languages));
+	config.computed.languages.forEach((lang) => {
+		pack.file(`texts/${lang}.lang`, language_lang(config, lang));
+	});
 
-	langs.forEach((lang) => packFile.file(`texts/${lang}.lang`, language(rootFileContents, defaultLang, lang)));
-
-	if (rootFileContents.components.skins) {
-		packFile.file("skins.json", JSON.stringify(skins(rootFileContents, defaultLang)));
-		rootFileContents.components.skins.files.forEach((skin) => {
-			packFile.file(basename(skin.file), readFileSync(resolve(rootPath, "skins", skin.file)));
+	// Build and insert skin files, if necessary
+	if (config.components.skins) {
+		pack.file("skins.json", skins_json(config));
+		config.components.skins.files.forEach((skin) => {
+			pack.file(basename(skin.file), readFileSync(resolve(dirname(configFile), skin.file)));
 		});
 	}
 
-	writeFileSync(exportFilename, packFile.generate({ base64: false, compression: "DEFLATE" }), "binary");
+	// Write the pack file
+	writeFileSync(config.computed.exportName, pack.generate({ base64: false, compression: "DEFLATE" }), "binary");
 
 	console.log("Done!");
 }

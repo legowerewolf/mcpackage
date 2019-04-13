@@ -1,12 +1,12 @@
 import { basename } from "path";
-import { PackConfig } from "./types";
+import { ComputedConfig } from "./types";
 
-export function manifest(config: PackConfig, defaultLang: string) {
+export function manifest_json(config: ComputedConfig) {
 	let manifest = {
 		format_version: 1,
 		header: {
-			name: config.meta.name[defaultLang],
-			description: config.meta.description[defaultLang],
+			name: config.meta.name[config.computed.defaultLang],
+			description: config.meta.description[config.computed.defaultLang],
 			version: config.meta.version.split(".").map((char) => parseInt(char)),
 			uuid: config.meta.uuid,
 		},
@@ -20,16 +20,16 @@ export function manifest(config: PackConfig, defaultLang: string) {
 			uuid: config.components.skins.meta.uuid,
 		});
 
-	return manifest;
+	return JSON.stringify(manifest);
 }
 
-export function skins(config: PackConfig, defaultLang: string) {
+export function skins_json(config: ComputedConfig) {
 	let skins = {
 		serialize_name: "skinpack_name",
 		localization_name: "skinpack_name",
 		skins: config.components.skins.files.map((skin) => {
 			return {
-				localization_name: skin.name[defaultLang],
+				localization_name: skin.name[config.computed.defaultLang],
 				geometry: "geometry.humanoid.custom",
 				texture: basename(skin.file),
 				type: "free",
@@ -37,20 +37,24 @@ export function skins(config: PackConfig, defaultLang: string) {
 		}),
 	};
 
-	return skins;
+	return JSON.stringify(skins);
 }
 
-export function languages(config: PackConfig) {
-	return Object.keys(config.meta.name);
-}
+export function language_lang(config: ComputedConfig, language: string) {
+	let lines = [];
 
-export function language(config: PackConfig, defaultLanguage: string, language: string) {
-	let lines = [
-		`pack.name=${config.meta.name[language]}`,
-		`pack.description=${config.meta.description[language]}`,
-		...(config.components.skins
-			? [`skinpack.skinpack_name=${config.components.skins.meta.name[language]}`, ...config.components.skins.files.map((skin) => `skin.skinpack_name.${skin.name[defaultLanguage]}=${skin.name[language]}`)]
-			: []),
-	];
+	// Insert universal lines
+	lines.push(`pack.name=${config.meta.name[language]}`);
+	lines.push(`pack.description=${config.meta.description[language]}`);
+
+	// Insert lines for skinpacks
+	if (config.components.skins) {
+		lines.push(`skinpack.skinpack_name=${config.components.skins.meta.name[language]}`);
+
+		config.components.skins.files.forEach((skin) => {
+			lines.push(`skin.skinpack_name.${skin.name[config.computed.defaultLang]}=${skin.name[language]}`);
+		});
+	}
+
 	return lines.join("\n");
 }

@@ -1,25 +1,40 @@
 {
-	"name": "mcpackage",
-	"version": "0.0.1",
-	"description": "Generate Minecraft resource packs from a simple config",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc"
-	},
-	"bin": {
-		"mcpackage": "bin.js"
-	},
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@types/js-yaml": "^3.12.1",
-		"@types/minimist": "^1.2.0",
-		"@types/node": "^11.13.4",
-		"typescript": "^3.4.3"
-	},
-	"dependencies": {
-		"js-yaml": "^3.13.1",
-		"minimist": "^1.2.0",
-		"node-zip": "^1.1.1"
-	}
+  "name": "mcpackage-cli",
+  "version": "0.0.1",
+  "description": "Generate Minecraft resource packs from a simple config",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "bin": {
+    "mcpackage": "bin.js"
+  },
+  "author": "legowerewolf",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/js-yaml": "^3.12.1",
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^11.13.4",
+    "@types/uuid": "^3.4.4",
+    "typescript": "^3.4.3"
+  },
+  "dependencies": {
+    "js-yaml": "^3.13.1",
+    "minimist": "^1.2.0",
+    "node-zip": "^1.1.1",
+    "uuid": "^3.3.2"
+  },
+  "dist": {},
+  "main": "bin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/legowerewolf/mcpackage.git"
+  },
+  "keywords": [
+    "minecraft"
+  ],
+  "bugs": {
+    "url": "https://github.com/legowerewolf/mcpackage/issues"
+  },
+  "homepage": "https://github.com/legowerewolf/mcpackage#readme"
 }
