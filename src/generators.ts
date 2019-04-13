@@ -53,10 +53,4 @@ export function language(config: PackConfig, defaultLanguage: string, language: 
 			: []),
 	];
 	return lines.join("\n");
-
-	return `pack.name=${config.meta.name[language]}
-${config.meta.description[language] ? `pack.description=${config.meta.description[language]}` : ""}
-
-${config.components.skins ? `skinpack.skinpack_name=${config.components.skins.meta.name[language]}` : ""}
-    `;
 }

@@ -36,4 +36,6 @@ export default function main() {
 	}
 
 	writeFileSync(exportFilename, packFile.generate({ base64: false, compression: "DEFLATE" }), "binary");
+
+	console.log("Done!");
 }
