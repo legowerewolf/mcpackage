@@ -4,7 +4,9 @@
 	"description": "Generate Minecraft resource packs from a simple config",
 	"scripts": {
 		"prepare": "npm run build",
-		"build": "tsc"
+		"build": "tsc",
+		"test": "echo \"No tests configured.\"",
+		"lint": "echo \"No linter configured.\""
 	},
 	"bin": {
 		"mcpackage": "bin.js"
